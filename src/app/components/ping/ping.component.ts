@@ -34,6 +34,7 @@ export class PingComponent implements OnInit {
   }
 
   public sendPing() {
+    console.log("Ping sent");
     this.game.sendMessage({ ping: Date.now() } as Ping);
   }
 }

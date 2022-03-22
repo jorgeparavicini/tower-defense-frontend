@@ -23,9 +23,7 @@ export abstract class GameManager extends GameConsumer {
 }
 
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class GameManagerService implements GameManager {
   private socket$?: WebSocketSubject<any>;
   private messagesSubject$ = new BehaviorSubject<any>(EMPTY);

@@ -6,12 +6,14 @@ import { AppComponent } from './app.component';
 import { GameComponent } from './components/game/game.component';
 import { PingComponent } from './components/ping/ping.component';
 import { GameConsumer, GameManager, GameManagerService } from './services/game-manager.service';
+import { MapComponent } from './components/game/map/map.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GameComponent,
-    PingComponent
+    PingComponent,
+    MapComponent
   ],
   imports: [
     BrowserModule,
