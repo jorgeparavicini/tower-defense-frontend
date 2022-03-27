@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { GameConsumer } from 'src/app/services/game-manager.service';
+import { GameConsumer, GameMessage } from 'src/app/services/game-manager.service';
 
 const PING_INTERVAL = 1000;
 
@@ -23,8 +23,8 @@ export class PingComponent implements OnInit {
   ngOnInit(): void {
     this.game.messages$.subscribe(
       x => { 
-        if ("pong" in x) {
-          this.ping = Date.now() - x["pong"];
+        if (x.message === "Pong") {
+          this.ping = x.data;
           this.cdr.detectChanges();
         }
       }
@@ -34,7 +34,6 @@ export class PingComponent implements OnInit {
   }
 
   public sendPing() {
-    console.log("Ping sent");
-    this.game.sendMessage({ ping: Date.now() } as Ping);
+    this.game.sendMessage({ message: "Ping", data: Date.now() } as GameMessage);
   }
 }

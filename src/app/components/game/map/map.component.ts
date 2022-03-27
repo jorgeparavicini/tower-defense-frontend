@@ -19,13 +19,13 @@ export class MapComponent implements OnInit {
   ngOnInit(): void {
     this.game.messages$.subscribe((x) => {
       // TODO: Add event message identifiers.
-      if ('background_image' in x) {
-        this.map = new Map(x as MapInterface);
+      if (x.message === "Map") {
+        this.map = new Map(x.data as MapInterface);
         this.cdr.detectChanges();
       }
 
-      if ('pos' in x) {
-        this.position = x.pos;
+      if (x.message === "Update") {
+        this.position = x.data;
         this.cdr.detectChanges();
       }
     });

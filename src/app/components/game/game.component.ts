@@ -20,7 +20,6 @@ export class GameComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.service.messages$.subscribe(x => console.log(x));
     this.service.connect();
   }
 }
