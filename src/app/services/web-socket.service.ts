@@ -11,33 +11,33 @@ interface ConnectCFG {
   reconnect: boolean;
 }
 
-export abstract class GameConsumer {
-  abstract messages$: Observable<GameMessage>;
+export abstract class WebSocketConsumer {
+  abstract messages$: Observable<WebSocketMessage>;
 
-  abstract sendMessage(msg: GameMessage): void;
+  abstract sendMessage(msg: WebSocketMessage): void;
 }
 
-export abstract class GameManager extends GameConsumer {
+export abstract class WebSocketManager extends WebSocketConsumer {
   abstract connect(cfg?: ConnectCFG): void;
   abstract close(): void;
 }
 
-export interface GameMessage {
+export interface WebSocketMessage {
   message: string,
   data: any
 }
 
 @Injectable()
-export class GameManagerService implements GameManager {
-  private socket$?: WebSocketSubject<GameMessage>;
-  private messagesSubject$ = new BehaviorSubject<Observable<GameMessage>>(EMPTY);
-  public messages$: Observable<GameMessage> = this.messagesSubject$.pipe(switchAll(), catchError(e => { throw e }));
+export class WebSocketService implements WebSocketManager {
+  private socket$?: WebSocketSubject<WebSocketMessage>;
+  private messagesSubject$ = new BehaviorSubject<Observable<WebSocketMessage>>(EMPTY);
+  public messages$: Observable<WebSocketMessage> = this.messagesSubject$.pipe(switchAll(), catchError(e => { throw e }));
 
   constructor() { }
 
   public connect(cfg: ConnectCFG = { reconnect: false }): void {
     if (!this.socket$ || this.socket$.closed) {
-      this.socket$ = this.getNewWebSocket() as WebSocketSubject<GameMessage>;
+      this.socket$ = this.getNewWebSocket() as WebSocketSubject<WebSocketMessage>;
       const messages = this.socket$.pipe(cfg.reconnect ? this.reconnect : o => o,
         tap({
           error: error => console.log(error),
@@ -71,7 +71,7 @@ export class GameManagerService implements GameManager {
     });
   }
 
-  public sendMessage(msg: GameMessage): void {
+  public sendMessage(msg: WebSocketMessage): void {
     this.socket$?.next(msg);
   }
 

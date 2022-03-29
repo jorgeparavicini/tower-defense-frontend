@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Position } from 'src/app/common/size';
-import { GameConsumer } from 'src/app/services/game-manager.service';
+import { GameService } from 'src/app/services/game.service';
 import { environment } from 'src/environments/environment';
-import { Map, MapInterface } from './map.model';
+import { Map, MapInterface } from '../../../models/map.model';
 
 @Component({
   selector: 'app-map',
@@ -11,13 +11,11 @@ import { Map, MapInterface } from './map.model';
 })
 export class MapComponent implements OnInit {
   resourcesUrl = environment.resourcesUrl;
-  map?: Map;
-  position: Position = { x: 0, y: 0 };
 
-  constructor(private game: GameConsumer, private cdr: ChangeDetectorRef) {}
+  constructor(public game: GameService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    this.game.messages$.subscribe((x) => {
+    /*this.game.messages$.subscribe((x) => {
       // TODO: Add event message identifiers.
       if (x.message === "Map") {
         this.map = new Map(x.data as MapInterface);
@@ -28,6 +26,8 @@ export class MapComponent implements OnInit {
         this.position = x.data;
         this.cdr.detectChanges();
       }
-    });
+    });*/
+
+    this.game.onUpdate.subscribe(() => this.cdr.detectChanges());
   }
 }

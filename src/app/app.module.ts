@@ -5,23 +5,25 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GameComponent } from './components/game/game.component';
 import { PingComponent } from './components/ping/ping.component';
-import { GameConsumer, GameManager, GameManagerService } from './services/game-manager.service';
+import { WebSocketConsumer, WebSocketManager, WebSocketService } from './services/web-socket.service';
 import { MapComponent } from './components/game/map/map.component';
+import { EnemyComponent } from './components/game/enemy/enemy.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GameComponent,
     PingComponent,
-    MapComponent
+    MapComponent,
+    EnemyComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule
   ],
   providers: [
-    { provide: GameManager, useClass: GameManagerService },
-    { provide: GameConsumer, useExisting: GameManager }
+    { provide: WebSocketManager, useClass: WebSocketService },
+    { provide: WebSocketConsumer, useExisting: WebSocketManager }
   ],
   bootstrap: [AppComponent]
 })

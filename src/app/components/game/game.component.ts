@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { GameManager, GameManagerService } from 'src/app/services/game-manager.service';
+import { GameService } from 'src/app/services/game.service';
 
 interface Position {
   pos: number;
@@ -13,13 +13,14 @@ interface Position {
 })
 export class GameComponent implements OnInit {
 
-  constructor(private service: GameManager) {
+  constructor(private service: GameService) {
   }
 
   ngOnInit(): void {
   }
 
   ngAfterViewInit() {
-    this.service.connect();
+    //this.service.messages$.subscribe(x => console.log(x));
+    //this.service.connect();
   }
 }

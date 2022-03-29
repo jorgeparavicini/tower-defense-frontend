@@ -1,11 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { GameConsumer, GameMessage } from 'src/app/services/game-manager.service';
+import { WebSocketConsumer, WebSocketMessage } from 'src/app/services/web-socket.service';
 
 const PING_INTERVAL = 1000;
-
-interface Ping {
-  ping: number;
-}
 
 @Component({
   selector: 'app-ping',
@@ -18,10 +14,10 @@ export class PingComponent implements OnInit {
   public ping: number = 0;
 
 
-  constructor(private game: GameConsumer, private cdr: ChangeDetectorRef) { }
+  constructor(private ws: WebSocketConsumer, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.game.messages$.subscribe(
+    this.ws.messages$.subscribe(
       x => { 
         if (x.message === "Pong") {
           this.ping = x.data;
@@ -34,6 +30,6 @@ export class PingComponent implements OnInit {
   }
 
   public sendPing() {
-    this.game.sendMessage({ message: "Ping", data: Date.now() } as GameMessage);
+    this.ws.sendMessage({ message: "Ping", data: Date.now() } as WebSocketMessage);
   }
 }

@@ -1,0 +1,8 @@
+<ng-container *ngIf="gameService.game">
+  <svg:circle
+    *ngFor="let enemy of gameService.game.enemies"
+    [attr.cx]="enemy.pos.x"
+    [attr.cy]="enemy.pos.y"
+    r="5"
+  ></svg:circle>
+</ng-container>

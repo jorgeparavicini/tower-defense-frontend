@@ -1,20 +1,20 @@
 <div
-  *ngIf="map"
+  *ngIf="game.map"
   class="w-100 h-100 d-flex align-items-center justify-content-center"
   [ngStyle]="{
-    background: 'repeat url(' + resourcesUrl + map.background_filler_image + ')'
+    background: 'repeat url(' + resourcesUrl + game.map.background_filler_image + ')'
   }"
 >
-  <div class="position-relative" [ngStyle]="map.containerStyleClass">
+  <div class="position-relative" [ngStyle]="game.map.containerStyleClass">
     <img
-      src="{{ resourcesUrl }}{{ map.background_image }}"
+      src="{{ resourcesUrl }}{{ game.map.background_image }}"
       class="h-100 w-100 top-0 start-0"
     />
     <svg
       class="w-100 h-100 position-absolute top-0 start-0"
-      [attr.viewBox]="map.viewBox"
+      [attr.viewBox]="game.map.viewBox"
     >
-      <circle [attr.cx]="position.x" [attr.cy]="position.y" r="5" />
+    <g app-enemy></g>
     </svg>
     <div class="w-100 h-100 position-absolute top-0 start-0">
       <app-ping class="position-absolute top-0 start-0"></app-ping>
