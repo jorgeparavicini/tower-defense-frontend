@@ -2,8 +2,10 @@
   *ngIf="game.map"
   class="w-100 h-100 d-flex align-items-center justify-content-center"
   [ngStyle]="{
-    background: 'repeat url(' + resourcesUrl + game.map.background_filler_image + ')'
+    background:
+      'repeat url(' + resourcesUrl + game.map?.background_filler_image + ')'
   }"
+  (click)="onClick($event)"
 >
   <div class="position-relative" [ngStyle]="game.map.containerStyleClass">
     <img
@@ -13,8 +15,11 @@
     <svg
       class="w-100 h-100 position-absolute top-0 start-0"
       [attr.viewBox]="game.map.viewBox"
+      #map
     >
-    <g app-enemy></g>
+      <g app-life></g>
+      <g app-enemy></g>
+      <g app-structure></g>
     </svg>
     <div class="w-100 h-100 position-absolute top-0 start-0">
       <app-ping class="position-absolute top-0 start-0"></app-ping>
