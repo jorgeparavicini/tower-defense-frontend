@@ -1,29 +1,25 @@
 import { Size } from 'src/app/common/size';
 
-export interface MapInterface {
+export interface GameMapInterface {
   background_filler_image: String;
   background_image: String;
   size: Size;
   max_lives: number;
 }
 
-export class Map implements MapInterface {
+export class GameMap implements GameMapInterface {
   background_filler_image: String;
   background_image: String;
   size: Size;
   max_lives: number;
 
-  constructor(data: MapInterface) {
+  constructor(data: GameMapInterface) {
     this.background_filler_image = data.background_filler_image;
     this.background_image = data.background_image;
     this.size = data.size;
     this.max_lives = data.max_lives;
   }
-
-  public get viewBox(): String {
-    return `0 0 ${this.size.x} ${this.size.y}`;
-  }
-
+  
   public get aspectRatio(): number {
     return this.size.x / this.size.y;
   }

@@ -1,18 +1,31 @@
 <div
-  *ngIf="game.map"
+  *ngIf="gameService.map"
   class="w-100 h-100 d-flex align-items-center justify-content-center"
   [ngStyle]="{
     background:
-      'repeat url(' + resourcesUrl + game.map?.background_filler_image + ')'
+      'repeat url(' +
+      resourcesUrl +
+      gameService.map?.background_filler_image +
+      ')'
   }"
   (click)="onClick($event)"
 >
-  <div class="position-relative" [ngStyle]="game.map.containerStyleClass">
+  <div
+    class="position-relative"
+    [ngStyle]="gameService.map.containerStyleClass"
+  >
     <img
-      src="{{ resourcesUrl }}{{ game.map.background_image }}"
+      src="{{ resourcesUrl }}{{ gameService.map.background_image }}"
       class="h-100 w-100 top-0 start-0"
     />
-    <svg
+    <canvas
+      #canvas
+      (click)="onClick($event)"
+      class="w-100 h-100 position-absolute top-0 start-0"
+      [attr.width]="gameService.map.size.x"
+      [attr.height]="gameService.map.size.y"
+    ></canvas>
+    <!--<svg
       class="w-100 h-100 position-absolute top-0 start-0"
       [attr.viewBox]="game.map.viewBox"
       #map
@@ -20,7 +33,7 @@
       <g app-life></g>
       <g app-enemy></g>
       <g app-structure></g>
-    </svg>
+    </svg>-->
     <div class="w-100 h-100 position-absolute top-0 start-0">
       <app-ping class="position-absolute top-0 start-0"></app-ping>
     </div>

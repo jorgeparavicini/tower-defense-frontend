@@ -7,10 +7,8 @@ import { GameComponent } from './components/game/game.component';
 import { PingComponent } from './components/ping/ping.component';
 import { WebSocketConsumer, WebSocketManager, WebSocketService } from './services/web-socket.service';
 import { MapComponent } from './components/game/map/map.component';
-import { EnemyComponent } from './components/game/enemy/enemy.component';
-import { LifeComponent } from './components/game/life/life.component';
 import { StructureShopComponent } from './components/game/structure-shop/structure-shop.component';
-import { StructureComponent } from './components/game/structure/structure.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -18,14 +16,12 @@ import { StructureComponent } from './components/game/structure/structure.compon
     GameComponent,
     PingComponent,
     MapComponent,
-    EnemyComponent,
-    LifeComponent,
-    StructureShopComponent,
-    StructureComponent
+    StructureShopComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
   providers: [
     { provide: WebSocketManager, useClass: WebSocketService },
