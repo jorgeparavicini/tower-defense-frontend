@@ -1,15 +1,17 @@
-import { GifFrame } from "./gif.model";
 import { Coord } from "./math.model";
+import { Spritesheet, SpritesheetFrame } from "./spritesheet.model";
 
 export interface Structure {
     id: number,
     pos: Coord,
     health: number,
-    structure_type: string
+    model: string,
+
+    getSpritesheet(): Spritesheet;
+    getAnimationDelay(): number | undefined;
+    getAnimationSpeed(): number;
 }
 
-export interface StructureData {
+export interface StructureModel {
     max_health: number,
-    gif_name: string,
-    frames: GifFrame[]
 }

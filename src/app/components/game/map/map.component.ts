@@ -10,13 +10,9 @@ import {
 } from '@angular/core';
 import { Game } from 'src/app/models/game.model';
 import { Size } from 'src/app/models/math.model';
-import { StructureData } from 'src/app/models/structure.model';
 import { GameService } from 'src/app/services/game.service';
-import { StructureService } from 'src/app/services/structure.service';
 import { environment } from 'src/environments/environment';
 import { GameMap } from '../../../models/map.model';
-
-const ANIMATION_SPEED = 50;
 
 @Component({
   selector: 'app-map',
@@ -48,27 +44,18 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   private emptyHeart = new Image(48, 48);
   private filledHeart = new Image(25, 25);
-  private structureData?: Map<string, StructureData>;
-  private structureImages: Map<string, HTMLImageElement> = new Map();
 
   constructor(
     public gameService: GameService,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone,
-    structureService: StructureService
   ) {
     this.emptyHeart.src = '/assets/icons8-pixel-heart-25.png';
     this.filledHeart.src = '/assets/icons8-pixel-heart-filled-48.png';
-
-    structureService
-      .getStructureData()
-      .subscribe((data) => (this.structureData = data));
   }
 
   ngOnInit(): void {
-    //this.gameService.onUpdate.subscribe(() => this.cdr.detectChanges());
     this.gameService.onGameLoaded.subscribe(() => this.mapLoaded());
-    this.gameService.connect();
   }
 
   ngAfterViewInit(): void {}
@@ -121,31 +108,28 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   private drawStructures() {
-    if (!this.structureData) return;
 
     for (let structure of this.game.structures) {
-      let structureData = this.structureData!.get(structure.structure_type)!;
 
-      if (!(structure.structure_type in this.structureImages)) {
-        let image = new Image();
-        image.src = environment.resourcesUrl + structureData.gif_name;
-        this.structureImages.set(structure.structure_type, image);
-      }
-
+      let spritesheet = structure.getSpritesheet();
+      let time_start = this.game.time - (structure.getAnimationDelay() ?? 0);
       let frameIndex =
-        Math.floor(Date.now() / ANIMATION_SPEED) % structureData.frames.length;
-      let frame = structureData.frames[frameIndex];
-      let image = this.structureImages.get(structure.structure_type)!;
+        Math.floor(time_start / structure.getAnimationSpeed()) % spritesheet.frames.frames.length;
+      let frame = spritesheet.frames.frames[frameIndex];
+      let image = spritesheet.image;
+      this.ctx.beginPath();
+      this.ctx.arc(structure.pos.x, structure.pos.y, 100, 0, Math.PI * 2);
+      this.ctx.stroke();
       this.ctx.drawImage(
         image,
         frame.frame.x,
         frame.frame.y,
         frame.frame.w,
         frame.frame.h,
-        structure.pos.x - frame.sourceSize.w / 2,
-        structure.pos.y - frame.sourceSize.h,
-        frame.sourceSize.w,
-        frame.sourceSize.h
+        structure.pos.x - spritesheet.size.x / 2,
+        structure.pos.y - spritesheet.size.y,
+        spritesheet.size.x,
+        spritesheet.size.y
       );
     }
   }
