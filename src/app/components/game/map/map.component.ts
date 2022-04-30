@@ -117,9 +117,6 @@ export class MapComponent implements OnInit, AfterViewInit {
         Math.floor(time_start / structure.getAnimationSpeed()) % spritesheet.frames.frames.length;
       let frame = spritesheet.frames.frames[frameIndex];
       let image = spritesheet.image;
-      this.ctx.beginPath();
-      this.ctx.arc(structure.pos.x, structure.pos.y, 100, 0, Math.PI * 2);
-      this.ctx.stroke();
       this.ctx.drawImage(
         image,
         frame.frame.x,
@@ -140,8 +137,6 @@ export class MapComponent implements OnInit, AfterViewInit {
     let ch = this.canvas.nativeElement.height;
     const x = (event.clientX - rect.left) * (cw / rect.width);
     const y = (event.clientY - rect.top) * (ch / rect.height);
-
-    console.log(`x: ${x}, y: ${y}`);
 
     this.gameService.click({ x: x, y: y });
   }

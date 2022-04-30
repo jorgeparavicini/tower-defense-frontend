@@ -57,13 +57,13 @@ export class GameService {
   }
 
   public click(pos: Position) {
-    this.onClick.emit(pos);
+    this.placeStructure(pos);
   }
 
   public placeStructure(pos: Position) {
     this.ws.sendMessage({
       message: 'PlaceStructure',
-      data: { structure: 'Grunt', pos: { x: pos.x, y: pos.y } },
+      data: { structure: 'LightningTower', pos: { x: pos.x, y: pos.y } },
     });
   }
 
