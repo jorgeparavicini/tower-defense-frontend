@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { GameService } from 'src/app/services/game.service';
 
 interface Position {
@@ -12,14 +12,6 @@ interface Position {
   styleUrls: ['./game.component.scss']
 })
 export class GameComponent implements OnInit {
-
-  constructor(private service: GameService) {
-  }
-
   ngOnInit(): void {
-  }
-
-  ngAfterViewInit() {
-    //this.service.messages$.subscribe(x => console.log(x));
   }
 }

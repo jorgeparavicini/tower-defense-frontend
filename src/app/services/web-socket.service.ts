@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { catchError, tap, switchAll, retryWhen, delayWhen } from 'rxjs/operators';
-import { BehaviorSubject, EMPTY, Observable, timer } from 'rxjs';
+import {
+  catchError,
+  tap,
+  switchAll,
+  retryWhen,
+  delayWhen,
+} from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, timer, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
-export const WS_ENDPOINT = environment.wsEndpoint;
 export const RECONNECT_INTERVAL = environment.reconnectInterval;
 
 interface ConnectCFG {
@@ -18,56 +23,85 @@ export abstract class WebSocketConsumer {
 }
 
 export abstract class WebSocketManager extends WebSocketConsumer {
-  abstract connect(cfg?: ConnectCFG): void;
+  abstract connect(url: string, cfg?: ConnectCFG): void;
   abstract close(): void;
 }
 
 export interface WebSocketMessage {
-  message: string,
-  data: any
+  message: string;
+  data: any;
 }
 
 @Injectable()
 export class WebSocketService implements WebSocketManager {
   private socket$?: WebSocketSubject<WebSocketMessage>;
-  private messagesSubject$ = new BehaviorSubject<Observable<WebSocketMessage>>(EMPTY);
-  public messages$: Observable<WebSocketMessage> = this.messagesSubject$.pipe(switchAll(), catchError(e => { throw e }));
+  private messagesSubject$ = new BehaviorSubject<Observable<WebSocketMessage>>(
+    EMPTY
+  );
+  public messages$: Observable<WebSocketMessage> = this.messagesSubject$.pipe(
+    switchAll(),
+    catchError((e) => {
+      throw e;
+    })
+  );
 
-  constructor() { }
+  constructor() {
+    console.log('Creating new websocket service');
+  }
 
-  public connect(cfg: ConnectCFG = { reconnect: false }): void {
+  public connect(url: string, cfg: ConnectCFG = { reconnect: false }): void {
     if (!this.socket$ || this.socket$.closed) {
-      this.socket$ = this.getNewWebSocket() as WebSocketSubject<WebSocketMessage>;
-      const messages = this.socket$.pipe(cfg.reconnect ? this.reconnect : o => o,
+      console.log('Establishing connection to ' + url);
+
+      this.socket$ = this.getNewWebSocket(
+        url
+      ) as WebSocketSubject<WebSocketMessage>;
+
+      const messages = this.socket$.pipe(
+        cfg.reconnect ? this.reconnect : (o) => o,
         tap({
-          error: error => console.log(error),
-        }), catchError(_ => EMPTY));
+          error: (error) => {
+            if (error.type == 'error') {
+              const m = of({message: "Not Found", data: "Lobby not found"} as WebSocketMessage);
+              this.messagesSubject$.next(m);
+            }
+            console.log(error)
+          },
+        }),
+        catchError((_) => EMPTY)
+      );
 
       this.messagesSubject$.next(messages);
     }
   }
 
   private reconnect(observable: Observable<any>): Observable<any> {
-    return observable.pipe(retryWhen(errors => errors.pipe(tap(val => console.log("Trying to reconnect.", val)),
-      delayWhen(_ => timer(RECONNECT_INTERVAL))
-    )));
+    return observable.pipe(
+      retryWhen((errors) =>
+        errors.pipe(
+          tap((val) => console.log('Trying to reconnect.', val)),
+          delayWhen((_) => timer(RECONNECT_INTERVAL))
+        )
+      )
+    );
   }
 
-  private getNewWebSocket() {
+  private getNewWebSocket(url: string) {
     return webSocket({
-      url: WS_ENDPOINT,
+      url: url,
       openObserver: {
         next: () => {
           console.log('Connected');
-        }
+        },
       },
       closeObserver: {
         next: () => {
-          console.log('connection closed');
+          console.log('Connection closed');
           this.socket$ = undefined;
-          this.connect({ reconnect: true });
-        }
-      }
+          if 
+          //this.connect(url, { reconnect: true });
+        },
+      },
     });
   }
 

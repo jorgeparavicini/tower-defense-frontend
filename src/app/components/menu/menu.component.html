@@ -1,0 +1,15 @@
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="jumbotron">
+    <h1 class="display-4">Welcome to Tower Defense</h1>
+    <p class="lead">Don't let them destroy your base</p>
+    <hr class="my-4" />
+    <p>Lets jump into a game!</p>
+    <div class="d-flex justify-content-between">
+      <a routerLink="/lobby" class="btn btn-primary">Host Game</a>
+      <div class="d-flex align-items-center">
+          <button routerLink="/lobby" [queryParams]="{id: gameId}" class="btn btn-primary me-2" [disabled]="!isValidId()">Join Game</button>
+          <input type="text" (input)="inputChanged($event)" maxlength="8"/>
+      </div>
+    </div>
+  </div>
+</div>

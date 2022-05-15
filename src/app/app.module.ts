@@ -9,6 +9,8 @@ import { WebSocketConsumer, WebSocketManager, WebSocketService } from './service
 import { MapComponent } from './components/game/map/map.component';
 import { StructureShopComponent } from './components/game/structure-shop/structure-shop.component';
 import { HttpClientModule } from '@angular/common/http';
+import { MenuComponent } from './components/menu/menu.component';
+import { LobbyComponent } from './components/lobby/lobby.component';
 
 @NgModule({
   declarations: [
@@ -16,16 +18,14 @@ import { HttpClientModule } from '@angular/common/http';
     GameComponent,
     PingComponent,
     MapComponent,
-    StructureShopComponent
+    StructureShopComponent,
+    MenuComponent,
+    LobbyComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule
-  ],
-  providers: [
-    { provide: WebSocketManager, useClass: WebSocketService },
-    { provide: WebSocketConsumer, useExisting: WebSocketManager }
   ],
   bootstrap: [AppComponent]
 })

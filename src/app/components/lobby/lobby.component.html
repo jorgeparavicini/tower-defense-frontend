@@ -1,0 +1,21 @@
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="jumbotron">
+    <h1 class="display-4">Lobby {{lobby}}</h1>
+    <hr class="my-4" />
+    <div class="d-flex justify-content-between mb-0">
+      <div>
+        <h2 class="display-6">Players:</h2>
+        <div>
+            <p *ngFor="let player of players">{{player}}</p>
+        </div>
+      </div>
+      <div>
+          <h2 class="display-6">Chat:</h2>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" [disabled]="!isHost">
+      {{ isHost ? "Start Game" : "Waiting for host" }}
+    </button>
+  </div>
+</div>

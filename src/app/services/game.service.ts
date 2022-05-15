@@ -1,11 +1,12 @@
-import { ApplicationRef, EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Game } from '../models/game.model';
 import { LightningTower } from '../models/lightning-tower.model';
 import { GameMap, GameMapInterface } from '../models/map.model';
 import { Position } from '../models/math.model';
 import { Structure, StructureModel } from '../models/structure.model';
 import { StructureService } from './structure.service';
-import { WebSocketManager, WebSocketService } from './web-socket.service';
+import { WebSocketManager } from './web-socket.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -47,13 +48,13 @@ export class GameService {
 
     this.structureService.getStructureData().subscribe(x => {
       this._structures = x;
-      this.connect();
       console.log("Connecting");
     })
   }
 
-  public connect() {
-    this.ws.connect();
+  public connect(gameId?: string | null) {
+    let path = gameId ? `join/${gameId}` : 'create';
+    this.ws.connect(`${environment.wsEndpoint}${path}`);
   }
 
   public click(pos: Position) {
