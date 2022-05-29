@@ -11,6 +11,8 @@ import { StructureShopComponent } from './components/game/structure-shop/structu
 import { HttpClientModule } from '@angular/common/http';
 import { MenuComponent } from './components/menu/menu.component';
 import { LobbyComponent } from './components/lobby/lobby.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToastsComponent } from './components/toasts/toasts.component';
 
 @NgModule({
   declarations: [
@@ -20,12 +22,14 @@ import { LobbyComponent } from './components/lobby/lobby.component';
     MapComponent,
     StructureShopComponent,
     MenuComponent,
-    LobbyComponent
+    LobbyComponent,
+    ToastsComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    NgbModule
   ],
   bootstrap: [AppComponent]
 })

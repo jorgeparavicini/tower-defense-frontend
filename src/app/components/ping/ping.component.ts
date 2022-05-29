@@ -20,7 +20,7 @@ export class PingComponent implements OnInit {
     this.ws.messages$.subscribe(
       x => { 
         if (x.message === "Pong") {
-          this.ping = x.data;
+          this.ping = Date.now() - x.data;
           this.cdr.detectChanges();
         }
       }

@@ -14,4 +14,5 @@ export interface Structure {
 
 export interface StructureModel {
     max_health: number,
+    icon: string
 }

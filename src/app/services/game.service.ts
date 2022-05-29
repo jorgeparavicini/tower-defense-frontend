@@ -31,8 +31,8 @@ export class GameService {
     return this._structures;
   }
 
-  constructor(private ws: WebSocketManager, private structureService: StructureService) {
-    this.ws.messages$.subscribe((x) => {
+  constructor(private structureService: StructureService) {
+    /*this.ws.messages$.subscribe((x) => {
       switch (x.message) {
         case 'Map':
           this.updateMap(x.data);
@@ -44,7 +44,7 @@ export class GameService {
           break;
       }
       this.onUpdate.emit();
-    });
+    });*/
 
     this.structureService.getStructureData().subscribe(x => {
       this._structures = x;
@@ -54,7 +54,7 @@ export class GameService {
 
   public connect(gameId?: string | null) {
     let path = gameId ? `join/${gameId}` : 'create';
-    this.ws.connect(`${environment.wsEndpoint}${path}`);
+    //this.ws.connect(`${environment.wsEndpoint}${path}`);
   }
 
   public click(pos: Position) {
@@ -62,10 +62,10 @@ export class GameService {
   }
 
   public placeStructure(pos: Position) {
-    this.ws.sendMessage({
+    /*this.ws.sendMessage({
       message: 'PlaceStructure',
       data: { structure: 'LightningTower', pos: { x: pos.x, y: pos.y } },
-    });
+    });*/
   }
 
   private updateMap(data: GameMapInterface) {
@@ -73,20 +73,21 @@ export class GameService {
   }
 
   private updateGame(data: Game) {
-    data.structures = data.structures.map(x => this.createStructure(x));
+    /*data.structures = data.structures.map(x => this.createStructure(x));
     if (!this._game) {
       this._game = data;
       this.onGameLoaded.emit();
     }
-    this._game = data;
+    this._game = data;*/
   }
 
-  private createStructure(data: Structure): Structure {
-    switch (data.model) {
+  /*private createStructure(data: Structure): Structure {
+
+    /*switch (data.model) {
       case "LightningTower":
         return new LightningTower(data, this);
       default:
         throw new Error(`Unknown model ${data.model}`);
     }
-  }
+  }*/
 }

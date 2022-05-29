@@ -1,0 +1,5 @@
+<div *ngIf="structures" class="">
+    <div *ngFor="let structure of structures | keyvalue">
+        <img src="{{resourcesUrl + structure.value.icon}}" (click)="selectStructure(structure.key); $event.stopPropagation()">
+    </div>
+</div>

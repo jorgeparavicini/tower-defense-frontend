@@ -98,7 +98,6 @@ export class WebSocketService implements WebSocketManager {
         next: () => {
           console.log('Connection closed');
           this.socket$ = undefined;
-          if 
           //this.connect(url, { reconnect: true });
         },
       },

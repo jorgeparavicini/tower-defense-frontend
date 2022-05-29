@@ -4,49 +4,58 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
+  Input,
   NgZone,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { Game } from 'src/app/models/game.model';
-import { Size } from 'src/app/models/math.model';
-import { GameService } from 'src/app/services/game.service';
+import { Position, Size } from 'src/app/models/math.model';
 import { environment } from 'src/environments/environment';
 import { GameMap } from '../../../models/map.model';
+import { StructureShopComponent } from '../structure-shop/structure-shop.component';
+
+interface StructurePlace {
+  position: Position,
+  structure: String
+}
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {'class': 'vw-100 vh-100 position-absolute top-0 start-0 z-background'}
 })
 export class MapComponent implements OnInit, AfterViewInit {
   resourcesUrl = environment.resourcesUrl;
+  onStructurePlace = new EventEmitter<StructurePlace>();
 
   @ViewChild('canvas', { static: false })
   canvas!: ElementRef<HTMLCanvasElement>;
+
+  @ViewChild(StructureShopComponent)
+  shop!: StructureShopComponent;
+
+  @Input()
+  map?: GameMap;
+
+  @Input()
+  game?: Game;
 
   private get ctx(): CanvasRenderingContext2D {
     return this.canvas!.nativeElement.getContext('2d')!;
   }
 
   private get size(): Size {
-    return this.gameService.map!.size;
-  }
-
-  private get map(): GameMap {
-    return this.gameService.map!;
-  }
-
-  private get game(): Game {
-    return this.gameService.game!;
+    return this.map!.size;
   }
 
   private emptyHeart = new Image(48, 48);
   private filledHeart = new Image(25, 25);
 
   constructor(
-    public gameService: GameService,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone,
   ) {
@@ -55,10 +64,13 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.gameService.onGameLoaded.subscribe(() => this.mapLoaded());
+    
+    //this.gameService.onGameLoaded.subscribe(() => this.mapLoaded());
   }
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit(): void {
+    this.mapLoaded();
+  }
 
   private mapLoaded() {
     console.log('Loaded');
@@ -70,11 +82,15 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   private draw() {
+    if (!this.game || !this.map || !this.canvas) {
+      window.requestAnimationFrame(() => this.draw());
+      return;
+    }
     this.ctx.clearRect(
       0,
       0,
-      this.gameService.map!.size.x,
-      this.gameService.map!.size.y
+      this.map!.size.x,
+      this.map!.size.y
     );
 
     this.ctx.imageSmoothingEnabled = false;
@@ -87,8 +103,8 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   private drawLifes() {
-    let max_lives = this.gameService.map!.max_lives;
-    let current_lives = this.gameService.game!.current_lives;
+    let max_lives = this.map!.max_lives;
+    let current_lives = this.game!.current_lives;
 
     for (let i = 0; i < max_lives; i++) {
       if (max_lives - i <= current_lives) {
@@ -100,7 +116,8 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   private drawEnemies() {
-    for (let enemy of this.game.enemies) {
+
+    for (let enemy of this.game!.enemies) {
       this.ctx.beginPath();
       this.ctx.arc(enemy.pos.x, enemy.pos.y, 5, 0, 2 * Math.PI);
       this.ctx.fill();
@@ -109,10 +126,10 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   private drawStructures() {
 
-    for (let structure of this.game.structures) {
+    for (let structure of this.game!.structures) {
 
       let spritesheet = structure.getSpritesheet();
-      let time_start = this.game.time - (structure.getAnimationDelay() ?? 0);
+      let time_start = this.game!.time - (structure.getAnimationDelay() ?? 0);
       let frameIndex =
         Math.floor(time_start / structure.getAnimationSpeed()) % spritesheet.frames.frames.length;
       let frame = spritesheet.frames.frames[frameIndex];
@@ -138,6 +155,13 @@ export class MapComponent implements OnInit, AfterViewInit {
     const x = (event.clientX - rect.left) * (cw / rect.width);
     const y = (event.clientY - rect.top) * (ch / rect.height);
 
-    this.gameService.click({ x: x, y: y });
+    this.placeStructure({x: x, y: y});
+  }
+
+  private placeStructure(pos: Position) {
+    let structure = this.shop.selectedStructure;
+    if (structure) {
+      this.onStructurePlace.emit({position: pos, structure: structure});
+    }
   }
 }

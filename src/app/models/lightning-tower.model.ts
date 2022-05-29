@@ -2,13 +2,14 @@ import { environment } from 'src/environments/environment';
 import { GameService } from '../services/game.service';
 import { Coord } from './math.model';
 import { Spritesheet, SpritesheetFrames } from './spritesheet.model';
-import { Structure } from './structure.model';
+import { Structure, StructureModel } from './structure.model';
 
 const IDLE_ANIMATION_SPEED = 50;
 
 export interface LightningTowerModel {
   attack_frames: SpritesheetFrames;
   idle_frames: SpritesheetFrames;
+  icon: string,
   attack_spritesheet: string;
   idle_spritesheet: string;
   max_health: number;
@@ -50,7 +51,7 @@ export class LightningTower implements Structure {
   attack_spritesheet: Spritesheet;
   idle_spritesheet: Spritesheet;
 
-  constructor(data: any, gameService: GameService) {
+  constructor(data: any, structures: Map<string, StructureModel>) {
     this.id = data.id;
     this.pos = data.pos;
     this.health = data.health;
@@ -72,7 +73,7 @@ export class LightningTower implements Structure {
         this.state = State.Idle;
     }
 
-    this.dataModel = gameService.structures.get(
+    this.dataModel = structures.get(
       this.model
     ) as LightningTowerModel;
 
@@ -82,7 +83,7 @@ export class LightningTower implements Structure {
     this.attack_spritesheet = {
       image: new Image(),
       frames: this.dataModel.attack_frames,
-      size: { x: 100, y: 100 },
+      size: { x: 76, y: 76 },
     };
     this.attack_spritesheet.image.src =
       environment.resourcesUrl + this.dataModel.attack_spritesheet;

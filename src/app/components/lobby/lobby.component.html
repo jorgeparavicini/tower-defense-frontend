@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-center align-items-center vh-100">
+<div *ngIf="!map || !game; else map" class="d-flex justify-content-center align-items-center vh-100">
   <div class="jumbotron">
     <h1 class="display-4">Lobby {{lobby}}</h1>
     <hr class="my-4" />
@@ -14,8 +14,12 @@
       </div>
     </div>
 
-    <button class="btn btn-primary" [disabled]="!isHost">
+    <button class="btn btn-primary" [disabled]="!isHost" (click)="startGame()">
       {{ isHost ? "Start Game" : "Waiting for host" }}
     </button>
   </div>
 </div>
+
+<ng-template #map>
+  <app-map #gameInstance [map]="gameMap" [game]="game"></app-map>
+</ng-template>
