@@ -1,0 +1,21 @@
+Deployment Konzept
+
+Frontend:
+-	Gehosted auf Cloud, mit Loadbalancer und Autoscaling
+-	Content delivery network, stellt sicher, dass es global erreichbar und hoch performant für alle Benutzer ist.
+-	Dropdown mit Regionsauswahl. Es ist nur möglich mit Leuten in der gleichen Region zu spielen. 
+-	Region mit dem besten Ping wird per default ausgewählt. Bei manueller Auswahl wird der Ping überprüft, ist er > 100ms wird die Verbindung abgelehnt.
+
+Backend:
+-	Ein Datencenter pro Kontinent, mehrere Gameserver pro Datencenter mittels Autoscaling
+-	Zentrale Node pro Datencenter, welche entscheidet auf welchem Gameserver ein neues Spiel gestartet wird. Sind alle Gameserver voll wird eine neue Instanz gestartet. 
+-	Backup der Node wird laufen upgedated und springt ein, wenn die Main Node sterben sollte.
+-	Wenn ein Gameserver während einem laufenden Spiel ausfällt, wird der Spielstand nicht gespeichert. Betrifft nur einen kleinen Teil der Spiele, da alle anderen Gameserver weiterlaufen.
+-	Datenkonsistenz ist gegeben, da alles auf dem Server läuft und das Frontend nur den aktuellen Status vom Server übermittelt bekommt.
+-	Spiel kann pausiert und gespeichert werden, Backend erstellt ein volles Backup des Spielstandes inklusive Spieler IDs und kann fortgeführt werden sofern beide Spieler wieder in der Lobby sind. 
+
+Dev Pipeline:
+-	Wir verwenden Git mit Automatischer Testpipeline. Es kann nur auf Dev gepushed werden und nur über den master kann deployed werden. 
+-	Bei einem Pull request von Dev auf Master wird nur gemerged, wenn alle Test erfolgreich durchlaufen. Sobald ein neuer Commit auf master ist wird dieser gebaut und auf Octopus Deploy hochgeladen. Von dort kann auf Integration, Dev und Prod deployed werden. 
+-	Jede Region kann einzeln updated werden.  
+-	Octupus bietet ausgereiftes release Management an, welches wir brauchen. 
