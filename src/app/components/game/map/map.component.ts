@@ -12,13 +12,16 @@ import {
 } from '@angular/core';
 import { Game } from 'src/app/models/game.model';
 import { Position, Size } from 'src/app/models/math.model';
+import { Structure, StructureModel } from 'src/app/models/structure.model';
+import { StructureService } from 'src/app/services/structure.service';
 import { environment } from 'src/environments/environment';
 import { GameMap } from '../../../models/map.model';
+import { StructureInfoComponent } from '../structure-info/structure-info.component';
 import { StructureShopComponent } from '../structure-shop/structure-shop.component';
 
 interface StructurePlace {
-  position: Position,
-  structure: String
+  position: Position;
+  structure: String;
 }
 
 @Component({
@@ -26,17 +29,21 @@ interface StructurePlace {
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {'class': 'vw-100 vh-100 position-absolute top-0 start-0 z-background'}
+  host: { class: 'vw-100 vh-100 position-absolute top-0 start-0 z-background' },
 })
 export class MapComponent implements OnInit, AfterViewInit {
   resourcesUrl = environment.resourcesUrl;
   onStructurePlace = new EventEmitter<StructurePlace>();
+  onStructureUpgrade = new EventEmitter<Structure>();
 
   @ViewChild('canvas', { static: false })
   canvas!: ElementRef<HTMLCanvasElement>;
 
   @ViewChild(StructureShopComponent)
   shop!: StructureShopComponent;
+
+  @ViewChild(StructureInfoComponent)
+  info!: StructureInfoComponent;
 
   @Input()
   map?: GameMap;
@@ -55,21 +62,20 @@ export class MapComponent implements OnInit, AfterViewInit {
   private emptyHeart = new Image(48, 48);
   private filledHeart = new Image(25, 25);
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private ngZone: NgZone,
-  ) {
+  constructor(private cdr: ChangeDetectorRef, private ngZone: NgZone) {
     this.emptyHeart.src = '/assets/icons8-pixel-heart-25.png';
     this.filledHeart.src = '/assets/icons8-pixel-heart-filled-48.png';
   }
 
   ngOnInit(): void {
-    
     //this.gameService.onGameLoaded.subscribe(() => this.mapLoaded());
   }
 
   ngAfterViewInit(): void {
     this.mapLoaded();
+    this.info.onStructureUpgrade.subscribe((x) =>
+      this.onStructureUpgrade.emit(x)
+    );
   }
 
   private mapLoaded() {
@@ -86,12 +92,7 @@ export class MapComponent implements OnInit, AfterViewInit {
       window.requestAnimationFrame(() => this.draw());
       return;
     }
-    this.ctx.clearRect(
-      0,
-      0,
-      this.map!.size.x,
-      this.map!.size.y
-    );
+    this.ctx.clearRect(0, 0, this.map!.size.x, this.map!.size.y);
 
     this.ctx.imageSmoothingEnabled = false;
 
@@ -116,7 +117,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   private drawEnemies() {
-
     for (let enemy of this.game!.enemies) {
       this.ctx.beginPath();
       this.ctx.arc(enemy.pos.x, enemy.pos.y, 5, 0, 2 * Math.PI);
@@ -125,15 +125,15 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   private drawStructures() {
-
     for (let structure of this.game!.structures) {
-
       let spritesheet = structure.getSpritesheet();
       let time_start = this.game!.time - (structure.getAnimationDelay() ?? 0);
       let frameIndex =
-        Math.floor(time_start / structure.getAnimationSpeed()) % spritesheet.frames.frames.length;
+        Math.floor(time_start / structure.getAnimationSpeed()) %
+        spritesheet.frames.frames.length;
       let frame = spritesheet.frames.frames[frameIndex];
       let image = spritesheet.image;
+
       this.ctx.drawImage(
         image,
         frame.frame.x,
@@ -155,13 +155,31 @@ export class MapComponent implements OnInit, AfterViewInit {
     const x = (event.clientX - rect.left) * (cw / rect.width);
     const y = (event.clientY - rect.top) * (ch / rect.height);
 
-    this.placeStructure({x: x, y: y});
+    if (this.shop.selectedStructure) {
+      this.placeStructure({ x: x, y: y });
+    } else {
+      this.selectStructure({ x: x, y: y });
+    }
   }
 
   private placeStructure(pos: Position) {
     let structure = this.shop.selectedStructure;
     if (structure) {
-      this.onStructurePlace.emit({position: pos, structure: structure});
+      this.onStructurePlace.emit({ position: pos, structure: structure });
+      this.shop.consumeSelectedStructure();
     }
+  }
+
+  private selectStructure(pos: Position) {
+    for (let structure of this.game!.structures) {
+      let dif = { x: pos.x - structure.pos.x, y: pos.y - structure.pos.y };
+      let distance = Math.sqrt(Math.pow(dif.x, 2) + Math.pow(dif.y, 2));
+
+      if (distance < structure.radius) {
+        this.info.selectStructure(structure);
+        return;
+      }
+    }
+    this.info.deselect();
   }
 }

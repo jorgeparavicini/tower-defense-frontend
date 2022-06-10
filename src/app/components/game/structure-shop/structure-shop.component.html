@@ -1,5 +1,11 @@
-<div *ngIf="structures" class="">
-    <div *ngFor="let structure of structures | keyvalue">
-        <img src="{{resourcesUrl + structure.value.icon}}" (click)="selectStructure(structure.key); $event.stopPropagation()">
-    </div>
+<div *ngIf="structures" class="d-flex flex-row">
+  <ng-container *ngFor="let structure of buyableStructures() | keyvalue">
+    <a
+      (click)="selectStructure(structure.key); $event.stopPropagation()"
+      class="btn fixed-size m-3 p-0"
+      [ngClass]="{'selected': structure.key === selectedStructure}"
+    >
+      <img src="{{ resourcesUrl + structure.value.icon }}" class="img-fluid"/>
+    </a>
+  </ng-container>
 </div>

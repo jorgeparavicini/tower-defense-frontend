@@ -1,6 +1,15 @@
-import { ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Game } from 'src/app/models/game.model';
+import { LightningTowerV1 } from 'src/app/models/lightning-tower-v1.model';
 import { LightningTower } from 'src/app/models/lightning-tower.model';
 import { GameMap } from 'src/app/models/map.model';
 import { Structure, StructureModel } from 'src/app/models/structure.model';
@@ -40,11 +49,25 @@ export class LobbyComponent implements OnInit, OnDestroy {
   structures!: Map<string, StructureModel>;
 
   private gameInstance?: MapComponent;
-  @ViewChild('gameInstance', { static: false }) set content(content: MapComponent) {
+  @ViewChild('gameInstance', { static: false }) set content(
+    content: MapComponent
+  ) {
     if (content) {
-      console.log("Initializing game");
+      console.log('Initializing game');
       this.gameInstance = content;
-      this.gameInstance.onStructurePlace.subscribe(x => this.service.sendMessage({ message: 'PlaceStructure', data: { structure: x.structure, pos: x.position } }));
+      this.gameInstance.onStructurePlace.subscribe((x) =>
+        this.service.sendMessage({
+          message: 'PlaceStructure',
+          data: { structure: x.structure, pos: x.position },
+        })
+      );
+      this.gameInstance.onStructureUpgrade.subscribe((x) => {
+        console.log("Upgrading");
+        this.service.sendMessage({
+          message: 'UpgradeStructure',
+          data: { id: x.id },
+        });
+      });
     }
   }
 
@@ -56,9 +79,9 @@ export class LobbyComponent implements OnInit, OnDestroy {
     private router: Router,
     private structureService: StructureService
   ) {
-    this.structureService.getStructureData().subscribe(x => {
+    this.structureService.getStructureData().subscribe((x) => {
       this.structures = x;
-    })
+    });
   }
 
   ngOnInit(): void {
@@ -91,15 +114,19 @@ export class LobbyComponent implements OnInit, OnDestroy {
         break;
 
       case 'Not Found':
-        console.log("Lobby not found")
-        this.toastService.show("Could not find lobby", { classname: 'bg-danger text-light' });
-        this.router.navigateByUrl("/menu");
+        console.log('Lobby not found');
+        this.toastService.show('Could not find lobby', {
+          classname: 'bg-danger text-light',
+        });
+        this.router.navigateByUrl('/menu');
         break;
 
       case 'GameClosed':
-        console.log("Game closed");
-        this.toastService.show("Game was closed by the host", { classname: 'bg-primary text-light' });
-        this.router.navigateByUrl("/menu");
+        console.log('Game closed');
+        this.toastService.show('Game was closed by the host', {
+          classname: 'bg-primary text-light',
+        });
+        this.router.navigateByUrl('/menu');
         break;
 
       case 'Update':
@@ -108,7 +135,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
           this.gameMap = new GameMap(JSON.parse(data.data));
         } else {
           let d = JSON.parse(data.data) as Game;
-          d.structures = d.structures.map(x => this.createStructure(x));
+          d.structures = d.structures.map((x) => this.createStructure(x));
           this.game = d;
           this.chr.detectChanges();
         }
@@ -117,13 +144,16 @@ export class LobbyComponent implements OnInit, OnDestroy {
   }
 
   startGame(): void {
-    this.service.sendMessage({ message: "Start", data: null });
+    this.service.sendMessage({ message: 'Start', data: null });
   }
 
   private createStructure(data: Structure): Structure {
     switch (data.model) {
-      case "LightningTower":
+      case 'LightningTower':
         return new LightningTower(data, this.structures);
+
+      case 'LightningTowerV1':
+        return new LightningTowerV1(data, this.structures);
       default:
         throw new Error(`Unknown model ${data.model}`);
     }

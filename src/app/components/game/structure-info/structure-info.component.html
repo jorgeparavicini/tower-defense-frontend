@@ -1,0 +1,21 @@
+<div
+  *ngIf="selectedStructure"
+  class="h-100 bg-white rounded p-3 d-flex flex-column"
+  (click)="$event.stopPropagation()"
+>
+  <h2>{{ selectedStructureModel.name }}</h2>
+  <h5>Level: {{ selectedStructureModel.level }}</h5>
+  <h5>Attack Range: {{ selectedStructureModel.attack_range }}</h5>
+  <h5>Attack Damage: {{ selectedStructureModel.attack_damage }}</h5>
+  <h5>Attack Cooldown: {{ selectedStructureModel.attack_cooldown }}</h5>
+  <h5>Attack Duration: {{ selectedStructureModel.attack_duration }}</h5>
+  <h5>Radius: {{ selectedStructureModel.radius }}</h5>
+
+  <button
+    class="btn btn-primary w-100 mt-auto"
+    [disabled]="!selectedStructureModel.can_be_upgraded"
+    (click)="upgrade()"
+  >
+    Upgrade
+  </button>
+</div>

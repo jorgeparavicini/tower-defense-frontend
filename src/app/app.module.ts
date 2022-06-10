@@ -13,6 +13,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { LobbyComponent } from './components/lobby/lobby.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastsComponent } from './components/toasts/toasts.component';
+import { StructureInfoComponent } from './components/game/structure-info/structure-info.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { ToastsComponent } from './components/toasts/toasts.component';
     StructureShopComponent,
     MenuComponent,
     LobbyComponent,
-    ToastsComponent
+    ToastsComponent,
+    StructureInfoComponent
   ],
   imports: [
     BrowserModule,
