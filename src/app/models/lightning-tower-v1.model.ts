@@ -80,7 +80,7 @@ export class LightningTowerV1 implements Structure {
     this.attack_spritesheet = {
       image: new Image(),
       frames: this.dataModel.attack_frames,
-      size: { x: 76, y: 76 },
+      size: { x: 75, y: 75 },
     };
     this.attack_spritesheet.image.src =
       environment.resourcesUrl + this.dataModel.attack_spritesheet;
@@ -88,7 +88,7 @@ export class LightningTowerV1 implements Structure {
     this.idle_spritesheet = {
       image: new Image(),
       frames: this.dataModel.idle_frames,
-      size: { x: 50, y: 50 },
+      size: { x: 75, y: 75 },
     };
     this.idle_spritesheet.image.src =
       environment.resourcesUrl + this.dataModel.idle_spritesheet;
