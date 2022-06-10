@@ -5,5 +5,7 @@ export interface Game {
     time: number,
     enemies: Enemy[],
     structures: Structure[],
-    current_lives: number
+    current_lives: number,
+    is_game_over: boolean,
+    coins: number
 }

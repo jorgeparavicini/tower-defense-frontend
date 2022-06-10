@@ -14,6 +14,7 @@ import { LobbyComponent } from './components/lobby/lobby.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastsComponent } from './components/toasts/toasts.component';
 import { StructureInfoComponent } from './components/game/structure-info/structure-info.component';
+import { GameOverComponent } from './components/game/game-over/game-over.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { StructureInfoComponent } from './components/game/structure-info/structu
     MenuComponent,
     LobbyComponent,
     ToastsComponent,
-    StructureInfoComponent
+    StructureInfoComponent,
+    GameOverComponent
   ],
   imports: [
     BrowserModule,

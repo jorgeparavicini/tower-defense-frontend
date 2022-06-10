@@ -1,0 +1,12 @@
+<div
+  class="w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-50"
+  (click)="$event.stopPropagation()"
+>
+  <div class="jumbotron bg-white p-4 rounded">
+    <h1 class="display-4">Game Over</h1>
+    <hr class="my-4" />
+    <p>You survived for {{ time / 1000 | number: "1.0-0" }} seconds</p>
+
+    <a class="btn btn-primary" routerLink="/"> Return to home </a>
+  </div>
+</div>

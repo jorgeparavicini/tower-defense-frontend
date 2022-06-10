@@ -129,13 +129,14 @@ export class LobbyComponent implements OnInit, OnDestroy {
         this.router.navigateByUrl('/menu');
         break;
 
-      case 'Update':
-        let data = message.data as WebSocketMessage;
+      case 'ClientUpdate':
+        let data = message.data[0] as WebSocketMessage;
         if (data.message == 'Map') {
           this.gameMap = new GameMap(JSON.parse(data.data));
         } else {
           let d = JSON.parse(data.data) as Game;
           d.structures = d.structures.map((x) => this.createStructure(x));
+          d.coins = message.data[1];
           this.game = d;
           this.chr.detectChanges();
         }
