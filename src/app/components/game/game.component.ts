@@ -1,9 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { GameService } from 'src/app/services/game.service';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
-interface Position {
-  pos: number;
-}
 
 @Component({
   selector: 'app-game',

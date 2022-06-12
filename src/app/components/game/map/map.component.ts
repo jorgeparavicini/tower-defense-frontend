@@ -1,3 +1,4 @@
+import { StringMap } from '@angular/compiler/src/compiler_facade_interface';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -10,9 +11,11 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { EnemyModel } from 'src/app/models/enemy.model';
 import { Game } from 'src/app/models/game.model';
 import { Position, Size } from 'src/app/models/math.model';
 import { Structure, StructureModel } from 'src/app/models/structure.model';
+import { EnemyService } from 'src/app/services/enemy.service';
 import { StructureService } from 'src/app/services/structure.service';
 import { environment } from 'src/environments/environment';
 import { GameMap } from '../../../models/map.model';
@@ -51,6 +54,8 @@ export class MapComponent implements OnInit, AfterViewInit {
   @Input()
   game?: Game;
 
+  enemies?: Map<string, EnemyModel>;
+
   private get ctx(): CanvasRenderingContext2D {
     return this.canvas!.nativeElement.getContext('2d')!;
   }
@@ -62,9 +67,15 @@ export class MapComponent implements OnInit, AfterViewInit {
   private emptyHeart = new Image(48, 48);
   private filledHeart = new Image(25, 25);
 
-  constructor(private cdr: ChangeDetectorRef, private ngZone: NgZone) {
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
+    enemyService: EnemyService
+  ) {
     this.emptyHeart.src = '/assets/icons8-pixel-heart-25.png';
     this.filledHeart.src = '/assets/icons8-pixel-heart-filled-48.png';
+
+    enemyService.getEnemyModels().subscribe((x) => (this.enemies = x));
   }
 
   ngOnInit(): void {
@@ -109,18 +120,48 @@ export class MapComponent implements OnInit, AfterViewInit {
 
     for (let i = 0; i < max_lives; i++) {
       if (max_lives - i <= current_lives) {
-        this.ctx.drawImage(this.filledHeart, this.size.x - 25 * (i + 1), 0, 25, 25);
+        this.ctx.drawImage(
+          this.filledHeart,
+          this.size.x - 25 * (i + 1),
+          0,
+          25,
+          25
+        );
       } else {
-        this.ctx.drawImage(this.emptyHeart, this.size.x - 25 * (i + 1), 0, 25, 25);
+        this.ctx.drawImage(
+          this.emptyHeart,
+          this.size.x - 25 * (i + 1),
+          0,
+          25,
+          25
+        );
       }
     }
   }
 
   private drawEnemies() {
+    if (!this.enemies) return;
     for (let enemy of this.game!.enemies) {
-      this.ctx.beginPath();
-      this.ctx.arc(enemy.pos.x, enemy.pos.y, 5, 0, 2 * Math.PI);
-      this.ctx.fill();
+      let model = this.enemies.get(enemy.enemy_type)!;
+      let animationSpeed = enemy.is_dying
+        ? model.death_duration / model.dying_frames.frames.frames.length
+        : 100;
+      let spritesheet = enemy.is_dying ? model.dying_frames : model.idle_frames;
+      let time_start = this.game!.time - enemy.animation_start;
+      let frameIndex =
+        Math.floor(time_start / animationSpeed) %
+        spritesheet.frames.frames.length;
+      let frame = spritesheet.frames.frames[frameIndex];
+
+      this.ctx.drawImage(spritesheet.image,
+        frame.frame.x,
+        frame.frame.y,
+        frame.frame.w,
+        frame.frame.h,
+        enemy.pos.x - spritesheet.size.x / 2,
+        enemy.pos.y - spritesheet.size.y,
+        spritesheet.size.x,
+        spritesheet.size.y);
     }
   }
 

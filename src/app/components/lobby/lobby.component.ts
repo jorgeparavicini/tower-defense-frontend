@@ -8,6 +8,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Enemy } from 'src/app/models/enemy.model';
 import { Game } from 'src/app/models/game.model';
 import { LightningTowerV1 } from 'src/app/models/lightning-tower-v1.model';
 import { LightningTower } from 'src/app/models/lightning-tower.model';
@@ -137,6 +138,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
           let d = JSON.parse(data.data) as Game;
           d.structures = d.structures.map((x) => this.createStructure(x));
           d.coins = message.data[1];
+          d.enemies = d.enemies.map(x => new Enemy(x));
           this.game = d;
           this.chr.detectChanges();
         }

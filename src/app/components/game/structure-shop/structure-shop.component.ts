@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { StructureModel } from 'src/app/models/structure.model';
-import { GameService } from 'src/app/services/game.service';
 import { StructureService } from 'src/app/services/structure.service';
 import { environment } from 'src/environments/environment';
 
