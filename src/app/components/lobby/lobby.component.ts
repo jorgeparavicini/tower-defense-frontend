@@ -1,7 +1,7 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
-  ElementRef,
   Input,
   OnDestroy,
   OnInit,
@@ -14,6 +14,7 @@ import { LightningTowerV1 } from 'src/app/models/lightning-tower-v1.model';
 import { LightningTower } from 'src/app/models/lightning-tower.model';
 import { GameMap } from 'src/app/models/map.model';
 import { Structure, StructureModel } from 'src/app/models/structure.model';
+import { GameService } from 'src/app/services/game.service';
 import { StructureService } from 'src/app/services/structure.service';
 import { ToastService } from 'src/app/services/toast.service';
 
@@ -29,6 +30,7 @@ import {
   WebSocketService,
 } from 'src/app/services/web-socket.service';
 import { environment } from 'src/environments/environment';
+import { ChatComponent } from '../chat/chat.component';
 import { MapComponent } from '../game/map/map.component';
 
 @Component({
@@ -40,7 +42,7 @@ import { MapComponent } from '../game/map/map.component';
     { provide: WebSocketConsumer, useExisting: WebSocketManager },
   ],
 })
-export class LobbyComponent implements OnInit, OnDestroy {
+export class LobbyComponent implements OnInit, OnDestroy, AfterViewInit {
   isHost: boolean = true;
   players: string[] = [];
   lobby!: string;
@@ -48,6 +50,12 @@ export class LobbyComponent implements OnInit, OnDestroy {
   gameMap?: GameMap;
   game?: Game;
   structures!: Map<string, StructureModel>;
+
+  games?: string[];
+  selectedGame?: string;
+
+  @ViewChild(ChatComponent)
+  chat!: ChatComponent;
 
   private gameInstance?: MapComponent;
   @ViewChild('gameInstance', { static: false }) set content(
@@ -63,10 +71,17 @@ export class LobbyComponent implements OnInit, OnDestroy {
         })
       );
       this.gameInstance.onStructureUpgrade.subscribe((x) => {
-        console.log("Upgrading");
+        console.log('Upgrading');
         this.service.sendMessage({
           message: 'UpgradeStructure',
           data: { id: x.id },
+        });
+      });
+      this.gameInstance.onGameSave.subscribe((_) => {
+        console.log('Saving');
+        this.service.sendMessage({
+          message: 'Save',
+          data: undefined,
         });
       });
     }
@@ -78,11 +93,18 @@ export class LobbyComponent implements OnInit, OnDestroy {
     private chr: ChangeDetectorRef,
     private toastService: ToastService,
     private router: Router,
-    private structureService: StructureService
+    private structureService: StructureService,
+    gamesService: GameService
   ) {
     this.structureService.getStructureData().subscribe((x) => {
       this.structures = x;
     });
+
+    gamesService.getSavedGames().subscribe((x) => (this.games = x));
+  }
+
+  selectSavedGame(savedGame: string) {
+    this.selectedGame = savedGame;
   }
 
   ngOnInit(): void {
@@ -97,6 +119,12 @@ export class LobbyComponent implements OnInit, OnDestroy {
     console.log('Connecting to lobby: ' + gameId);
     let path = gameId ? `join/${gameId}` : 'create';
     this.service.connect(`${environment.wsEndpoint}${path}`);
+  }
+
+  ngAfterViewInit(): void {
+    this.chat.onMessageSent.subscribe((x) =>
+      this.service.sendMessage({ message: 'Chat', data: x })
+    );
   }
 
   ngOnDestroy(): void {
@@ -138,16 +166,30 @@ export class LobbyComponent implements OnInit, OnDestroy {
           let d = JSON.parse(data.data) as Game;
           d.structures = d.structures.map((x) => this.createStructure(x));
           d.coins = message.data[1];
-          d.enemies = d.enemies.map(x => new Enemy(x));
+          d.enemies = d.enemies.map((x) => new Enemy(x));
           this.game = d;
           this.chr.detectChanges();
         }
+        break;
+
+      case 'Chat':
+        break;
+
+      case 'NewChatMessage':
+        this.chat.messages.push({
+          client: message.data.client,
+          message: message.data.message,
+        });
         break;
     }
   }
 
   startGame(): void {
     this.service.sendMessage({ message: 'Start', data: null });
+  }
+
+  loadGame(): void {
+    this.service.sendMessage({ message: 'Load', data: this.selectedGame! });
   }
 
   private createStructure(data: Structure): Structure {

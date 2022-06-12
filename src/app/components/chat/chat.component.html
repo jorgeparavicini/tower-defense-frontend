@@ -1,0 +1,19 @@
+<div class="d-flex flex-column-reverse">
+  <button class="btn btn-outline-primary m-2 ms-auto d-flex justify-content-center align-items-center" (click)="toggleChat()">
+    <img src="/assets/chat.svg">
+  </button>
+  <div *ngIf="display" class="chat card me-2 p-2 d-flex flex-column">
+    <div *ngFor="let message of messages">
+      <span class="fw-bold">{{message.client}}: </span>
+      <span>{{message.message}}</span>
+    </div>
+
+    <div class="mt-auto w-100 d-flex">
+      <input type="text" class="w-auto" #input>
+      <button class="btn btn-outline-primary ms-auto d-flex justify-content-center align-items-center" (click)="sendMessage()">
+        <img src="/assets/send.svg">
+      </button>
+    </div>
+  </div>
+</div>
+

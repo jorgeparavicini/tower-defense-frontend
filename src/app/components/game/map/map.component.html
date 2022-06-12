@@ -2,18 +2,11 @@
   *ngIf="map && game"
   class="w-100 h-100 d-flex align-items-center justify-content-center"
   [ngStyle]="{
-    background:
-      'repeat url(' +
-      resourcesUrl +
-      map.background_filler_image +
-      ')'
+    background: 'repeat url(' + resourcesUrl + map.background_filler_image + ')'
   }"
   (click)="onClick($event)"
 >
-  <div
-    class="position-relative"
-    [ngStyle]="map.containerStyleClass"
-  >
+  <div class="position-relative" [ngStyle]="map.containerStyleClass">
     <img
       src="{{ resourcesUrl }}{{ map.background_image }}"
       class="h-100 w-100 top-0 start-0"
@@ -26,13 +19,29 @@
       [attr.height]="map.size.y"
     ></canvas>
     <div class="w-100 h-100 position-absolute top-0 start-0 zindex-dropdown">
-      <!--<app-ping class="position-absolute top-0 start-0"></app-ping>-->
-      <app-structure-shop #shop class="position-absolute w-100 bottom-0 start-0"></app-structure-shop>
-      <app-structure-info #info class="position-absolute top-50 end-0 translate-middle-y"></app-structure-info>
-      <app-game-over *ngIf="game.is_game_over" [time]="game.time"></app-game-over>
-      <div class="position-absolute top-0 start-0 d-flex coin align-items-center">
-        <img src="/assets/coin.png" class="img-fluid">
-        <h1>{{game.coins}}</h1>
+      <button
+        class="btn btn-primary position-absolute top-0 start-50 translate-middle-x"
+        (click)="saveGame()"
+      >
+        Save
+      </button>
+      <app-structure-shop
+        #shop
+        class="position-absolute w-100 bottom-0 start-0"
+      ></app-structure-shop>
+      <app-structure-info
+        #info
+        class="position-absolute top-50 end-0 translate-middle-y"
+      ></app-structure-info>
+      <app-game-over
+        *ngIf="game.is_game_over"
+        [time]="game.time"
+      ></app-game-over>
+      <div
+        class="position-absolute top-0 start-0 d-flex coin align-items-center"
+      >
+        <img src="/assets/coin.png" class="img-fluid" />
+        <h1>{{ game.coins }}</h1>
       </div>
     </div>
   </div>

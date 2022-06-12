@@ -1,25 +1,45 @@
-<div *ngIf="!map || !game; else map" class="d-flex justify-content-center align-items-center vh-100">
+<div
+  *ngIf="!map || !game; else map"
+  class="d-flex justify-content-center align-items-center vh-100"
+>
   <div class="jumbotron">
-    <h1 class="display-4">Lobby {{lobby}}</h1>
+    <h1 class="display-4">Lobby {{ lobby }}</h1>
     <hr class="my-4" />
     <div class="d-flex justify-content-between mb-0">
-      <div>
+      <div class="me-5">
         <h2 class="display-6">Players:</h2>
-        <div>
-            <p *ngFor="let player of players">{{player}}</p>
+        <div class="list">
+          <p *ngFor="let player of players">{{ player }}</p>
         </div>
+        <button class="btn btn-primary" [disabled]="!isHost" (click)="startGame()">
+          {{ isHost ? "Start New Game" : "Waiting for host" }}
+        </button>
       </div>
       <div>
-          <h2 class="display-6">Chat:</h2>
+        <h2 class="display-6">Saved Games:</h2>
+        <div class="list">
+          <p
+            role="button"
+            class="p-1 ps-3 m-0 rounded-pill"
+            *ngFor="let savedGame of games"
+            (click)="selectSavedGame(savedGame)"
+            [ngClass]="{ 'bg-primary text-white': savedGame == selectedGame }"
+          >
+            {{ savedGame }}
+          </p>
+        </div>
+        <button class="btn btn-primary" [disabled]="!isHost || !selectedGame" (click)="loadGame()">
+          {{ isHost ? "Load Game" : "Waiting for host" }}
+        </button>
       </div>
     </div>
 
-    <button class="btn btn-primary" [disabled]="!isHost" (click)="startGame()">
-      {{ isHost ? "Start Game" : "Waiting for host" }}
-    </button>
+
   </div>
 </div>
 
 <ng-template #map>
   <app-map #gameInstance [map]="gameMap" [game]="game"></app-map>
 </ng-template>
+
+<app-chat class="position-absolute end-0 bottom-0"></app-chat>

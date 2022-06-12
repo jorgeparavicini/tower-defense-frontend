@@ -15,6 +15,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastsComponent } from './components/toasts/toasts.component';
 import { StructureInfoComponent } from './components/game/structure-info/structure-info.component';
 import { GameOverComponent } from './components/game/game-over/game-over.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { GameOverComponent } from './components/game/game-over/game-over.compone
     LobbyComponent,
     ToastsComponent,
     StructureInfoComponent,
-    GameOverComponent
+    GameOverComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,

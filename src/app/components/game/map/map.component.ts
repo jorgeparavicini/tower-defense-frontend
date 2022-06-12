@@ -38,6 +38,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   resourcesUrl = environment.resourcesUrl;
   onStructurePlace = new EventEmitter<StructurePlace>();
   onStructureUpgrade = new EventEmitter<Structure>();
+  onGameSave = new EventEmitter<void>();
 
   @ViewChild('canvas', { static: false })
   canvas!: ElementRef<HTMLCanvasElement>;
@@ -222,5 +223,9 @@ export class MapComponent implements OnInit, AfterViewInit {
       }
     }
     this.info.deselect();
+  }
+
+  saveGame() {
+    this.onGameSave.emit();
   }
 }
