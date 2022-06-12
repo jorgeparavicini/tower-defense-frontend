@@ -3,7 +3,7 @@ import { Coord } from './math.model';
 import { Spritesheet, SpritesheetFrames } from './spritesheet.model';
 import { Structure, StructureModel } from './structure.model';
 
-const IDLE_ANIMATION_SPEED = 50;
+const IDLE_ANIMATION_SPEED = 200;
 
 export interface LightningTowerModelV1 {
   attack_frames: SpritesheetFrames;
@@ -80,7 +80,7 @@ export class LightningTowerV1 implements Structure {
     this.attack_spritesheet = {
       image: new Image(),
       frames: this.dataModel.attack_frames,
-      size: { x: 75, y: 75 },
+      size: { x: 150, y: 150 },
     };
     this.attack_spritesheet.image.src =
       environment.resourcesUrl + this.dataModel.attack_spritesheet;
@@ -88,7 +88,7 @@ export class LightningTowerV1 implements Structure {
     this.idle_spritesheet = {
       image: new Image(),
       frames: this.dataModel.idle_frames,
-      size: { x: 75, y: 75 },
+      size: { x: 150, y: 150 },
     };
     this.idle_spritesheet.image.src =
       environment.resourcesUrl + this.dataModel.idle_spritesheet;

@@ -10,6 +10,8 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Enemy } from 'src/app/models/enemy.model';
 import { Game } from 'src/app/models/game.model';
+import { KonfettiKanoneV1 } from 'src/app/models/konfetti-kanone-v1.model';
+import { KonfettiKanoneV2 } from 'src/app/models/konfetti-kanone-v2.model';
 import { LightningTowerV1 } from 'src/app/models/lightning-tower-v1.model';
 import { LightningTower } from 'src/app/models/lightning-tower.model';
 import { GameMap } from 'src/app/models/map.model';
@@ -199,6 +201,13 @@ export class LobbyComponent implements OnInit, OnDestroy, AfterViewInit {
 
       case 'LightningTowerV1':
         return new LightningTowerV1(data, this.structures);
+
+      case 'KonfettiKanoneV1':
+        return new KonfettiKanoneV1(data, this.structures);
+
+      case 'KonfettiKanoneV2':
+        return new KonfettiKanoneV2(data, this.structures);
+
       default:
         throw new Error(`Unknown model ${data.model}`);
     }

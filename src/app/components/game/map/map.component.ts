@@ -123,18 +123,18 @@ export class MapComponent implements OnInit, AfterViewInit {
       if (max_lives - i <= current_lives) {
         this.ctx.drawImage(
           this.filledHeart,
-          this.size.x - 25 * (i + 1),
+          this.size.x - 50 * (i + 1),
           0,
-          25,
-          25
+          50,
+          50
         );
       } else {
         this.ctx.drawImage(
           this.emptyHeart,
-          this.size.x - 25 * (i + 1),
+          this.size.x - 50 * (i + 1),
           0,
-          25,
-          25
+          50,
+          50
         );
       }
     }

@@ -45,7 +45,7 @@ export class EnemyModel {
     this.idle_frames = {
       image: new Image(),
       frames: data['idle_frames'],
-      size: { x: 40, y: 40 },
+      size: { x: 80, y: 80 },
     };
     this.idle_frames.image.src =
       environment.resourcesUrl + data['idle_spritesheet'];
@@ -53,7 +53,7 @@ export class EnemyModel {
     this.dying_frames = {
       image: new Image(),
       frames: data['dying_frames'],
-      size: { x: 40, y: 40 },
+      size: { x: 80, y: 80 },
     };
     this.dying_frames.image.src =
       environment.resourcesUrl + data['dying_spritesheet'];

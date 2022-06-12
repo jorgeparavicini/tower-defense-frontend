@@ -5,10 +5,10 @@ import { Structure, StructureModel } from './structure.model';
 
 const IDLE_ANIMATION_SPEED = 200;
 
-export interface LightningTowerModel {
+export interface KonfettiKanoneModelV1 {
   attack_frames: SpritesheetFrames;
   idle_frames: SpritesheetFrames;
-  icon: string,
+  icon: string;
   attack_spritesheet: string;
   idle_spritesheet: string;
   max_health: number;
@@ -37,7 +37,7 @@ enum State {
   Cooldown,
 }
 
-export class LightningTower implements Structure {
+export class KonfettiKanoneV1 implements Structure {
   id: number;
   pos: Coord;
   health: number;
@@ -48,11 +48,11 @@ export class LightningTower implements Structure {
   state_data: Idle | Attack | Cooldown;
   animation_time?: number;
 
-  dataModel: LightningTowerModel;
+  dataModel: KonfettiKanoneModelV1;
   attack_spritesheet: Spritesheet;
   idle_spritesheet: Spritesheet;
 
-  constructor(data: any, structures: Map<string, StructureModel>) {
+  constructor(data: any, structures: Map<String, StructureModel>) {
     this.id = data.id;
     this.pos = data.pos;
     this.health = data.health;
@@ -75,17 +75,12 @@ export class LightningTower implements Structure {
         this.state = State.Idle;
     }
 
-    this.dataModel = structures.get(
-      this.model
-    ) as any as LightningTowerModel;
-
-    // Create Spritesheets
-    // TODO: Sizes should come from backend
+    this.dataModel = structures.get(this.model) as any as KonfettiKanoneModelV1;
 
     this.attack_spritesheet = {
       image: new Image(),
       frames: this.dataModel.attack_frames,
-      size: { x: 220, y: 220 },
+      size: { x: 80, y: 80 },
     };
     this.attack_spritesheet.image.src =
       environment.resourcesUrl + this.dataModel.attack_spritesheet;
@@ -93,7 +88,7 @@ export class LightningTower implements Structure {
     this.idle_spritesheet = {
       image: new Image(),
       frames: this.dataModel.idle_frames,
-      size: { x: 150, y: 150 },
+      size: { x: 80, y: 80 },
     };
     this.idle_spritesheet.image.src =
       environment.resourcesUrl + this.dataModel.idle_spritesheet;
@@ -115,7 +110,10 @@ export class LightningTower implements Structure {
 
   getAnimationSpeed(): number {
     if (this.state == State.Attack) {
-      return this.dataModel.attack_duration / this.attack_spritesheet.frames.frames.length;
+      return (
+        this.dataModel.attack_duration /
+        this.attack_spritesheet.frames.frames.length
+      );
     }
     return IDLE_ANIMATION_SPEED;
   }

@@ -1,4 +1,4 @@
-<div *ngIf="structures" class="d-flex flex-row">
+<div *ngIf="structures" class="d-flex flex-row justify-content-end">
   <ng-container *ngFor="let structure of buyableStructures() | keyvalue">
     <a
       (click)="selectStructure(structure.key); $event.stopPropagation()"
