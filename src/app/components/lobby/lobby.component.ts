@@ -15,6 +15,7 @@ import { KonfettiKanoneV2 } from 'src/app/models/konfetti-kanone-v2.model';
 import { LightningTowerV1 } from 'src/app/models/lightning-tower-v1.model';
 import { LightningTower } from 'src/app/models/lightning-tower.model';
 import { GameMap } from 'src/app/models/map.model';
+import { SingleShotTowerV1 } from 'src/app/models/single-shot-tower-v1.model';
 import { Structure, StructureModel } from 'src/app/models/structure.model';
 import { GameService } from 'src/app/services/game.service';
 import { StructureService } from 'src/app/services/structure.service';
@@ -207,6 +208,9 @@ export class LobbyComponent implements OnInit, OnDestroy, AfterViewInit {
 
       case 'KonfettiKanoneV2':
         return new KonfettiKanoneV2(data, this.structures);
+
+      case 'SingleShotTowerV1':
+        return new SingleShotTowerV1(data, this.structures);
 
       default:
         throw new Error(`Unknown model ${data.model}`);
